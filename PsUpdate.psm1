@@ -21,7 +21,14 @@ Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
 			$LocalVertion = Get-Content -Path ~/$Vertion
 
 			# ローカルにリポジトリに置いてあるバージョン管理ファイルをダウンロードし読み込む
-			Invoke-WebRequest -Uri https://raw.githubusercontent.com/$GitHubName/$ModuleName/master/Vertion.txt -OutFile ~/$VertionTemp
+			try{
+				Invoke-WebRequest -Uri https://raw.githubusercontent.com/$GitHubName/$ModuleName/master/Vertion.txt -OutFile ~/$VertionTemp
+			}
+			catch{
+				Write-Output "Github にアクセスできません"
+				return
+			}
+
 			$NowVertion = Get-Content -Path ~/$VertionTemp
 			Remove-Item ~/$VertionTemp
 
@@ -33,8 +40,14 @@ Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
 
 		if( $Update ){
 			Write-Output "最新版に更新します"
+			try{
+				Invoke-WebRequest -Uri https://raw.githubusercontent.com/$GitHubName/$ModuleName/master/OnlineInstall.ps1 -OutFile ~/OnlineInstall.ps1
+			}
+			catch{
+				Write-Output "Github にアクセスできません"
+				return
+			}
 			Write-Output "更新完了後、PowerShell プロンプトを開きなおしてください"
-			Invoke-WebRequest -Uri https://raw.githubusercontent.com/$GitHubName/$ModuleName/master/OnlineInstall.ps1 -OutFile ~/OnlineInstall.ps1
 			& ~/OnlineInstall.ps1
 			Write-Output "更新完了"
 			Write-Output "PowerShell プロンプトを開きなおしてください"
