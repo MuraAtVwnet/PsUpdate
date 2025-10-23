@@ -1,7 +1,7 @@
 ﻿#################################################################
 # PowerShell 更新
 #################################################################
-Function PsUpdate([switch]$Force, [switch]$VertionCheck){
+Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
 	# バージョンチェックとオンライン更新
 	if( $VertionCheck ){
 		$ModuleName = "PsUpdate"
@@ -46,8 +46,13 @@ Function PsUpdate([switch]$Force, [switch]$VertionCheck){
 	}
 
 	# 本来の処理
-	if((Get-Command winget -ea SilentlyContinue) -and (-Not $Force)){
-		winget install --id Microsoft.Powershell --source winget
+	if(Get-Command winget -ErrorAction SilentlyContinue){
+		if( $Check ){
+			winget search Microsoft.PowerShell
+		}
+		elseif(-Not $Force){
+			winget install --id Microsoft.Powershell --source winget
+		}
 	}
 	else{
 		Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
