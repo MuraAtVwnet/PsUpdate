@@ -59,19 +59,16 @@ Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
 	}
 
 	# 本来の処理
-	if( $Force ){
+	if( ($Force) -OR (-NOT (Get-Command winget -ErrorAction SilentlyContinue) ) ){
 		Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
 	}
-	elseif(Get-Command winget -ErrorAction SilentlyContinue){
+	else{
 		if( $Check ){
 			winget search Microsoft.PowerShell
 		}
 		else{
 			winget install --id Microsoft.Powershell --source winget
 		}
-	}
-	else{
-		Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
 	}
 }
 
