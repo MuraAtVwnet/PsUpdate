@@ -6,7 +6,7 @@ Windows 11 と Windows Server 2019/2022 で動作確認しました
 ■ スクリプトインストール方法
 --- 以下を PowerShell プロンプトにコピペ ---
 
-$ModuleName = "MakeOnlineInstallKit"
+$ModuleName = "PsUpdate"
 $GitHubName = "MuraAtVwnet"
 $URI = "https://raw.githubusercontent.com/$GitHubName/$ModuleName/refs/heads/main/OnlineInstall.ps1"
 $OutFile = "~/OnlineInstall.ps1"
