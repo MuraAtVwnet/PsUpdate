@@ -3,7 +3,7 @@
 #################################################################
 Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
 	if( $VertionCheck ){
-		$ModuleName = "MakeOnlineInstallKit"
+		$ModuleName = "PsUpdate"
 		$GitHubName = "MuraAtVwnet"
 
 		$HomeDirectory = "~/"
