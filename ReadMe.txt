@@ -6,6 +6,8 @@ Windows 11 と Windows Server 2019/2022 で動作確認しました
 ■ スクリプトインストール方法
 --- 以下を PowerShell プロンプトにコピペ ---
 
+$Policy = Get-ExecutionPolicy
+if($Policy -notin @('RemoteSigned','Unrestricted','Bypass')){Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force}
 $ModuleName = "PsUpdate"
 $GitHubName = "MuraAtVwnet"
 $URI = "https://raw.githubusercontent.com/$GitHubName/$ModuleName/refs/heads/main/OnlineInstall.ps1"
@@ -35,19 +37,13 @@ PowerShell の更新でエラーになる場合に強制更新できるかも
 ■ スクリプトアンインストール方法
 --- 以下を PowerShell プロンプトにコピペ ---
 
-~/UninstallMakeOnlineInstallKit.ps1
-
-
-■ Windows PowerShell を使っている方へ
-Windows PowerShell でスクリプトがエラーになって実行出来ない場合は以下コマンドを PowerShell のプロンプトにコピペしてください
-
-if((Get-ExecutionPolicy) -ne 'RemoteSigned'){Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force}
+~/UninstallPsUpdate.ps1
 
 
 ■ GitHub
 以下リポジトリで公開しています
-https://github.com/MuraAtVwnet/MakeOnlineInstallKit
-git@github.com:MuraAtVwnet/MakeOnlineInstallKit.git
+https://github.com/MuraAtVwnet/PsUpdate
+git@github.com:MuraAtVwnet/PsUpdate.git
 
 
 ■ リポジトリ内モジュール説明
@@ -56,7 +52,7 @@ AddCode.ps1
 	オンラインインストール用組み込みコード
 Install.ps1
 	インストーラー
-MakeOnlineInstallKit.psm1
+PsUpdate.psm1
 	モジュール本体
 OnlineInstall.ps1
 	オンラインインストーラー
@@ -64,6 +60,10 @@ Uninstall.ps1
 	アンインストーラー
 Vertion.txt
 	バージョンチェックファイル
+Readme.txt
+	このファイル
+
+
 Readme.txt
 	このファイル
 
