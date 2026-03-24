@@ -2,37 +2,36 @@
 # PowerShell 更新
 #################################################################
 Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
-	# バージョンチェックとオンライン更新
 	if( $VertionCheck ){
-		$ModuleName = "PsUpdate"
+		$ModuleName = "MakeOnlineInstallKit"
 		$GitHubName = "MuraAtVwnet"
 
+		$HomeDirectory = "~/"
 		$Module = $ModuleName + ".psm1"
+		$Installer = "Install" + $ModuleName + ".ps1"
+		$Uninstaller = "Uninstall" + $ModuleName + ".ps1"
 		$Vertion = "Vertion" + $ModuleName + ".txt"
+		$GithubCommonURI = "https://raw.githubusercontent.com/$GitHubName/$ModuleName/refs/heads/main/"
 		$VertionTemp = "VertionTemp" + $ModuleName + ".tmp"
+		$VertionFilePath = Join-Path "~/" $Vertion
+		$VertionTempFilePath = Join-Path "~/" $VertionTemp
+		$VertionFileURI = $GithubCommonURI + "Vertion.txt"
+
 
 		$Update = $False
 
-		if( -not (Test-Path ~/$Vertion)){
+		if( -not (Test-Path $VertionFilePath)){
 			$Update = $True
 		}
 		else{
-			# 現在のバージョン
-			$LocalVertion = Get-Content -Path ~/$Vertion
+			$LocalVertion = Get-Content -Path $VertionFilePath
 
-			# ローカルにリポジトリに置いてあるバージョン管理ファイルをダウンロードし読み込む
-			try{
-				Invoke-WebRequest -Uri https://raw.githubusercontent.com/$GitHubName/$ModuleName/master/Vertion.txt -OutFile ~/$VertionTemp
-			}
-			catch{
-				Write-Output "Github にアクセスできません"
-				return
-			}
+			$URI = $VertionFileURI
+			$OutFile = $VertionTempFilePath
+			Invoke-WebRequest -Uri $URI -OutFile $OutFile
+			$NowVertion = Get-Content -Path $VertionTempFilePath
+			Remove-Item $VertionTempFilePath
 
-			$NowVertion = Get-Content -Path ~/$VertionTemp
-			Remove-Item ~/$VertionTemp
-
-			# バージョン チェック
 			if( $LocalVertion -ne $NowVertion ){
 				$Update = $True
 			}
@@ -40,15 +39,29 @@ Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
 
 		if( $Update ){
 			Write-Output "最新版に更新します"
-			try{
-				Invoke-WebRequest -Uri https://raw.githubusercontent.com/$GitHubName/$ModuleName/master/OnlineInstall.ps1 -OutFile ~/OnlineInstall.ps1
-			}
-			catch{
-				Write-Output "Github にアクセスできません"
-				return
-			}
 			Write-Output "更新完了後、PowerShell プロンプトを開きなおしてください"
-			& ~/OnlineInstall.ps1
+
+			$URI = $GithubCommonURI + $Module
+			$ModuleFile = $HomeDirectory + $Module
+			Invoke-WebRequest -Uri $URI -OutFile $ModuleFile
+
+			$URI = $GithubCommonURI + "Install.ps1"
+			$InstallerFile = $HomeDirectory + $Installer
+			Invoke-WebRequest -Uri $URI -OutFile $InstallerFile
+
+			$URI = $GithubCommonURI + "Uninstall.ps1"
+			$OutFile = $HomeDirectory + $Uninstaller
+			Invoke-WebRequest -Uri $URI -OutFile $OutFile
+
+			$URI = $GithubCommonURI + "Vertion.txt"
+			$OutFile = $HomeDirectory + $Vertion
+			Invoke-WebRequest -Uri $URI -OutFile $OutFile
+
+			& $InstallerFile
+
+			Remove-Item $ModuleFile
+			Remove-Item $InstallerFile
+
 			Write-Output "更新完了"
 			Write-Output "PowerShell プロンプトを開きなおしてください"
 		}
@@ -58,7 +71,8 @@ Function PsUpdate([switch]$Force, [switch]$Check, [switch]$VertionCheck){
 		return
 	}
 
-	# 本来の処理
+	# 以下本来のコード
+
 	if( ($Force) -OR (-NOT (Get-Command winget -ErrorAction SilentlyContinue) ) ){
 		Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
 	}
