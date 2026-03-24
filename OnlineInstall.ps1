@@ -1,6 +1,6 @@
 # Online installer
 
-$ModuleName = "MakeOnlineInstallKit"
+$ModuleName = "PsUpdate"
 $GitHubName = "MuraAtVwnet"
 
 $HomeDirectory = "~/"

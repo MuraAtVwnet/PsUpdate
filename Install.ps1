@@ -1,5 +1,5 @@
 # Module Name
-$ModuleName = "MakeOnlineInstallKit"
+$ModuleName = "PsUpdate"
 
 # Module Path
 if(($PSVersionTable.Platform -eq "Win32NT") -or ($PSVersionTable.Platform -eq $null)){
